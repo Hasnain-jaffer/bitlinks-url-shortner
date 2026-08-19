@@ -30,7 +30,7 @@ export default function Home() {
               Try Now
             </Link>
             
-              href="https://github.com"
+              href="https://github.com/Hasnain-jaffer"
               target="_blank"
               rel="noopener noreferrer"
               className="bg-gray-800 border border-gray-700 px-6 py-3 rounded-lg text-white font-semibold hover:bg-gray-700 transition-all hover:-translate-y-0.5 text-sm md:text-base"
