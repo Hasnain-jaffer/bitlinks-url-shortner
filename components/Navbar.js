@@ -24,7 +24,6 @@ const Navbar = () => {
         >
           BitLinks
         </Link>
-
         <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8 w-full md:w-auto">
           <ul className="flex flex-row flex-wrap justify-center gap-x-6 gap-y-2 text-sm md:text-base text-gray-300 font-medium">
             {links.map((link) => (
@@ -36,7 +35,6 @@ const Navbar = () => {
               </li>
             ))}
           </ul>
-
           <div className="flex flex-row gap-4">
             <Link
               href="/shorten"
