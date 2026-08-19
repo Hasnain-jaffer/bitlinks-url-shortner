@@ -42,7 +42,7 @@ const Navbar = () => {
             >
               Try Now
             </Link>
-            
+            <a
               href="https://github.com"
               target="_blank"
               rel="noopener noreferrer"
