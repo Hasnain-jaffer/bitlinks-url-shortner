@@ -29,7 +29,7 @@ export default function Home() {
             >
               Try Now
             </Link>
-            
+            <a
               href="https://github.com/Hasnain-jaffer"
               target="_blank"
               rel="noopener noreferrer"
