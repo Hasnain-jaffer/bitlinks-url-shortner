@@ -1,63 +1,61 @@
-import React from "react";
+"use client";
 import Link from "next/link";
+import { motion } from "framer-motion";
+
+const links = [
+  { href: "/", label: "Home" },
+  { href: "/about", label: "About" },
+  { href: "/shorten", label: "Shorten" },
+  { href: "/contact", label: "Contact" },
+];
 
 const Navbar = () => {
   return (
-    <nav className="bg-gray-900 text-white px-6 py-4 shadow-lg border-b border-gray-800">
+    <motion.nav
+      initial={{ y: -60, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+      className="bg-gray-950/90 backdrop-blur-md text-white px-6 py-4 shadow-lg border-b border-gray-800 sticky top-0 z-50"
+    >
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 md:gap-0">
-        
-        {/* Logo */}
-        <div className="text-2xl font-bold tracking-wide cursor-pointer">
-          <Link href="/" className="hover:text-blue-400 transition">BitLinks</Link>
-        </div>
+        <Link
+          href="/"
+          className="text-2xl font-extrabold tracking-wide bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent hover:scale-105 transition-transform inline-block"
+        >
+          BitLinks
+        </Link>
 
-        {/* Navigation Container 
-            - On Mobile: Flex-col to stack links above buttons
-            - On Desktop: Flex-row to align them inline
-        */}
         <div className="flex flex-col md:flex-row items-center gap-4 md:gap-8 w-full md:w-auto">
-          
-          {/* Links 
-             - flex-row & flex-wrap: Keeps links horizontal on mobile (saves vertical space)
-             - justify-center: Centers them on mobile
-          */}
           <ul className="flex flex-row flex-wrap justify-center gap-x-6 gap-y-2 text-sm md:text-base text-gray-300 font-medium">
-            <li>
-              <Link href="/" className="hover:text-white transition">Home</Link>
-            </li>
-            <li>
-              <Link href="/about" className="hover:text-white transition">About</Link>
-            </li>
-            <li>
-              <Link href="/shorten" className="hover:text-white transition">Shorten</Link>
-            </li>
-            <li>
-              <Link href="/contact" className="hover:text-white transition">Contact</Link>
-            </li>
+            {links.map((link) => (
+              <li key={link.href} className="relative group">
+                <Link href={link.href} className="hover:text-white transition-colors">
+                  {link.label}
+                </Link>
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-400 transition-all duration-300 group-hover:w-full" />
+              </li>
+            ))}
           </ul>
 
-          {/* Buttons 
-             - flex-row: Side-by-side buttons on mobile
-             - w-auto: Prevents them from stretching unnecessarily
-          */}
           <div className="flex flex-row gap-4">
-            <button className="bg-blue-600 px-5 py-2 rounded-full text-sm font-semibold hover:bg-blue-500 transition shadow-md">
-              <Link href="/shorten">Try Now</Link>
-            </button>
+            <Link
+              href="/shorten"
+              className="bg-blue-600 px-5 py-2 rounded-full text-sm font-semibold hover:bg-blue-500 transition-all shadow-md hover:shadow-blue-500/30 hover:-translate-y-0.5"
+            >
+              Try Now
+            </Link>
             
-            <a
               href="https://github.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-gray-800 border border-gray-700 px-5 py-2 rounded-full text-sm font-semibold hover:bg-gray-700 transition"
+              className="bg-gray-800 border border-gray-700 px-5 py-2 rounded-full text-sm font-semibold hover:bg-gray-700 transition-all hover:-translate-y-0.5"
             >
               GitHub
             </a>
           </div>
-          
         </div>
       </div>
-    </nav>
+    </motion.nav>
   );
 };
 
