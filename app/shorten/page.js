@@ -1,77 +1,122 @@
-"use client"
+"use client";
+import Link from "next/link";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
-import Link from 'next/link'
-import React, { useState } from 'react'
+const ShortenPage = () => {
+  const [url, setUrl] = useState("");
+  const [shortUrl, setShortUrl] = useState("");
+  const [generated, setGenerated] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-const ShortenPage = () => {  // <-- renamed to start with uppercase
+  const generate = async () => {
+    if (!url || !shortUrl) {
+      setError("Please fill in both fields.");
+      return;
+    }
+    setLoading(true);
+    setError("");
 
-  const [url, setUrl] = useState("")
-  const [shortUrl, setShortUrl] = useState("")
-  const [generated, setGenerated] = useState("")
+    try {
+      const res = await fetch("/api/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ url, shorturl: shortUrl }),
+      });
+      const result = await res.json();
 
-  const generate = () => {
-    const myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json");
-
-    const raw = JSON.stringify({
-      url: url,
-      shorturl: shortUrl
-    });
-
-    const requestOptions = {
-      method: "POST",
-      headers: myHeaders,
-      body: raw,
-      redirect: "follow"
-    };
-
-    fetch("/api/generate", requestOptions)
-      .then((response) => response.json())
-      .then((result) => {
-        setGenerated(`${process.env.NEXT_PUBLIC_HOST}/${shortUrl}`);   
+      if (result.success) {
+        setGenerated(`${process.env.NEXT_PUBLIC_HOST}/${shortUrl}`);
         setUrl("");
-        setShortUrl(""); 
-        console.log(result)
-        alert(result.message);
-      })
-      .catch((error) => console.error(error));
-  }
+        setShortUrl("");
+      } else {
+        setError(result.message || "Something went wrong.");
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Network error. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div className='mx-auto bg-blue-200 max-w-2xl p-8 rounded-lg shadow-lg flex flex-col my-10'>
-      <h1 className='font-bold text-2xl'>Generate Your Short URLs</h1>
-      <div className="flex flex-col gap-3 my-3">
-        <input 
-          type="text"
-          className='px-4 py-2 w-full rounded-md bg-white focus:outline-blue-900'
-          value={url} 
-          placeholder='Enter Your URL'
-          onChange={e => setUrl(e.target.value)}
-        />
-        <input 
-          type="text"
-          className='px-4 py-2 rounded-md bg-white focus:outline-blue-900'
-          value={shortUrl} 
-          placeholder='Enter Your Preferred short URL text'
-          onChange={e => setShortUrl(e.target.value)}
-        />
-        <button 
-          onClick={generate} 
-          className="bg-gray-900 px-4 py-2 rounded-lg text-white hover:bg-gray-800 transition cursor-pointer font-bold"
-        >
-          Generate
-        </button>
-        {generated && (
-          <>
-            <span className='font-bold text-lg'>Your Link </span>
-            <code>
-              <Link target="_blank" href={generated}>{generated}</Link> 
-            </code>
-          </>
-        )}
-      </div>    
-    </div>
-  )
-}
+    <section className="min-h-screen bg-gray-950 flex items-center justify-center px-6 py-20">
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+        className="w-full max-w-xl bg-gray-900 border border-gray-800 p-8 rounded-2xl shadow-xl"
+      >
+        <h1 className="font-bold text-2xl md:text-3xl text-white mb-1">
+          Generate Your Short URL
+        </h1>
+        <p className="text-gray-400 text-sm mb-6">
+          Paste a long link and choose a custom slug.
+        </p>
 
-export default ShortenPage
+        <div className="flex flex-col gap-4">
+          <input
+            type="text"
+            className="px-4 py-3 rounded-lg bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-500 transition-all"
+            value={url}
+            placeholder="Enter your URL"
+            onChange={(e) => setUrl(e.target.value)}
+          />
+          <input
+            type="text"
+            className="px-4 py-3 rounded-lg bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-500 transition-all"
+            value={shortUrl}
+            placeholder="Enter your preferred short URL slug"
+            onChange={(e) => setShortUrl(e.target.value)}
+          />
+
+          <motion.button
+            whileTap={{ scale: 0.97 }}
+            onClick={generate}
+            disabled={loading}
+            className="bg-blue-600 px-4 py-3 rounded-lg text-white font-bold hover:bg-blue-500 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+          >
+            {loading ? "Generating..." : "Generate"}
+          </motion.button>
+
+          <AnimatePresence>
+            {error && (
+              <motion.p
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                className="text-red-400 text-sm"
+              >
+                {error}
+              </motion.p>
+            )}
+
+            {generated && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                className="bg-gray-800 border border-blue-500/30 rounded-lg p-4 mt-2"
+              >
+                <span className="font-semibold text-gray-300 block mb-1 text-sm">
+                  Your link:
+                </span>
+                <Link
+                  target="_blank"
+                  href={generated}
+                  className="text-blue-400 hover:text-blue-300 underline break-all"
+                >
+                  {generated}
+                </Link>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </motion.div>
+    </section>
+  );
+};
+
+export default ShortenPage;
