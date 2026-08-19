@@ -27,7 +27,7 @@ const ShortenPage = () => {
       const result = await res.json();
 
       if (result.success) {
-        setGenerated(`${process.env.NEXT_PUBLIC_HOST}/${shortUrl}`);
+        setGenerated(`${window.location.origin}/${shortUrl}`);
         setUrl("");
         setShortUrl("");
       } else {
